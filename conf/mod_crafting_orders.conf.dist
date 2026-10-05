@@ -99,7 +99,7 @@ CraftingOrders.EnforceCooldowns = 1
 #        row. Default: 0
 #
 
-CraftingOrders.AccountWideCooldowns = 0
+CraftingOrders.AccountWideCooldowns = 1
 
 #
 #    CraftingOrders.RecipeOverrides
