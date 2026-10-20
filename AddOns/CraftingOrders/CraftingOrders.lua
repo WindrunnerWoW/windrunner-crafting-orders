@@ -14,9 +14,7 @@ if not ClassTrainerSkillButton_OnClick then
     ClassTrainerSkillButton_OnClick = function() end
 end
 
--- The compact frame reserves nine standard 16px skill rows. Keep
--- FauxScrollFrame and button rendering in lockstep with this value.
-TRADE_SKILLS_DISPLAYED = 9;
+local CRAFTING_ORDER_ROWS = 9;
 MAX_TRADE_SKILL_REAGENTS = 8;
 TRADE_SKILL_HEIGHT = 16;
 TRADE_SKILL_TEXT_WIDTH = 275;
@@ -837,9 +835,9 @@ local function UpdateCraftingOrderListHeight(numRows)
 
     -- Keep the full viewport for lists that need scrolling.  When the
     -- filtered list fits, remove the unused row-sized space at the bottom.
-    local visibleRows = math.min(numRows or 0, TRADE_SKILLS_DISPLAYED);
+    local visibleRows = math.min(numRows or 0, CRAFTING_ORDER_ROWS);
     local listHeight = 152;
-    if numRows and numRows > 0 and numRows <= TRADE_SKILLS_DISPLAYED then
+    if numRows and numRows > 0 and numRows <= CRAFTING_ORDER_ROWS then
         listHeight = (visibleRows * TRADE_SKILL_HEIGHT) + 8;
     end
     CraftingOrderListScrollFrame:SetHeight(listHeight);
@@ -1201,9 +1199,9 @@ function CraftingOrderFrame_Update()
         CraftingOrderCreateAllButton:Disable();
         CraftingOrderHighlightFrame:Hide();
         -- Still update scroll frame UI
-        FauxScrollFrame_Update(CraftingOrderListScrollFrame, 0, TRADE_SKILLS_DISPLAYED, TRADE_SKILL_HEIGHT, nil, nil, nil, CraftingOrderHighlightFrame, 293, 316);
+        FauxScrollFrame_Update(CraftingOrderListScrollFrame, 0, CRAFTING_ORDER_ROWS, TRADE_SKILL_HEIGHT, nil, nil, nil, CraftingOrderHighlightFrame, 293, 316);
         -- Hide all skill buttons
-        for i = 1, TRADE_SKILLS_DISPLAYED do
+        for i = 1, CRAFTING_ORDER_ROWS do
             _G["CraftingOrderSkill" .. i]:Hide();
         end
         return;
@@ -1213,7 +1211,7 @@ function CraftingOrderFrame_Update()
     CraftingOrderFrameEditBox:Show();
 
     -- ScrollFrame update
-    FauxScrollFrame_Update(CraftingOrderListScrollFrame, numRows, TRADE_SKILLS_DISPLAYED, TRADE_SKILL_HEIGHT, nil, nil, nil, CraftingOrderHighlightFrame, 293, 316);
+    FauxScrollFrame_Update(CraftingOrderListScrollFrame, numRows, CRAFTING_ORDER_ROWS, TRADE_SKILL_HEIGHT, nil, nil, nil, CraftingOrderHighlightFrame, 293, 316);
 
     CraftingOrderHighlightFrame:Hide();
 
@@ -1229,10 +1227,14 @@ function CraftingOrderFrame_Update()
 
     local skillButton, skillButtonCount;
 
-    for i = 1, TRADE_SKILLS_DISPLAYED do
-                local skillIndex = i + skillOffset;
+    for i = 1, CRAFTING_ORDER_ROWS do
+        local skillIndex = i + skillOffset;
         skillButton      = _G["CraftingOrderSkill" .. i];
         skillButtonCount = _G["CraftingOrderSkill" .. i .. "Count"];
+
+        if not skillButton then
+            break;
+        end
 
         if skillIndex <= numRows then
             local row = filteredRows[skillIndex];
